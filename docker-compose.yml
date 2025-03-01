@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  api:
+    container_name: blog-api
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+
+  db:
+    image: postgres
+    container_name: blog-db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: "mypassword"
+      POSTGRES_USER: "myuser"
+      POSTGRES_DB: "core"
+
+volumes:
+  pgdata:
