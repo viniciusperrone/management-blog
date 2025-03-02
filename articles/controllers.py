@@ -24,7 +24,6 @@ def create_category():
     if already_category:
         return jsonify({"error": "This category already exists"}), 401
 
-
     try:
         db.session.add(new_category)
         db.session.commit()
@@ -35,10 +34,15 @@ def create_category():
         return jsonify({"message": "Server Internal Error"}), 500
 
 
-def list_articles():
-    # articles = 
-    ...
+def list_categories():
+    categories = CategoryModel.query.all()
+    categories_schema = CategorySchema(many=True)
 
+    return jsonify(categories_schema.dump(categories)), 200
+
+
+def list_articles():
+    pass
 
 def detail_article():
     ...
