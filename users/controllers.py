@@ -19,7 +19,15 @@ def create_user():
         password=data['password']
     )
 
-    db.session.add(new_user)
-    db.session.commit()
+    existing_user = UserModel.query.filter_by(email=data['email']).first()
 
-    return jsonify(user_schema.dump(new_user)), 201
+    if existing_user:
+        return jsonify({"error": "There is already an email"}), 409
+
+    try:
+        db.session.add(new_user)
+        db.session.commit()
+
+        return jsonify(user_schema.dump(new_user)), 201
+    except Exception:
+        return jsonify({"message": "Server Internal Error"}), 500
