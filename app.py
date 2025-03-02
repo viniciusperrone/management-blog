@@ -5,6 +5,7 @@ import users
 import articles
 
 from users.routes import users_blueprint
+from articles.routes import articles_blueprint
 
 
 app = Flask(__name__)
@@ -18,6 +19,7 @@ db.init_app(app)
 migrate = Migrate(app, db)
 
 app.register_blueprint(users_blueprint)
+app.register_blueprint(articles_blueprint)
 
 if __name__ == "__main__":
     app.run(

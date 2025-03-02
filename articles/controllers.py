@@ -6,7 +6,7 @@ from articles.schemas import ArticleSchema, CategorySchema
 
 
 def create_category():
-    data = request.json()
+    data = request.get_json()
 
     category_schema = CategorySchema()
 
