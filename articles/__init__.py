@@ -1,1 +1,1 @@
-from .models import ArticlesModel
+from .models import ArticlesModel, CategoryModel
