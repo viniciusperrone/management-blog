@@ -3,6 +3,7 @@ from db import db
 
 from articles.models import ArticlesModel, CategoryModel
 from articles.schemas import ArticleSchema, CategorySchema
+from users.models import UserModel
 
 
 def create_category():
@@ -71,14 +72,45 @@ def create_article():
     if already_existing_slug:
         return jsonify({'message': 'Slug already exist'}), 400
     
+    categories = []
+    category_ids = data.get("categories_ids", [])
+
+    if not category_ids:
+        return jsonify({"message": "At least one category is required"}), 400
+
+    for category_id in category_ids:
+        category = CategoryModel.query.get(category_id)
+
+        if not category:
+            return jsonify({"message": f"Doesn't match category with given id {category_id}"}), 400
+
+        categories.append(category)       
+
+    data["categories"] = categories
+
+    existing_user = UserModel.query.get(data.get("user_id"))
+
+    if not existing_user:
+        return jsonify({"message": "Doesn't match user with given id"})
+
+    data["user"] = existing_user
+
     try:
-        new_article = ArticlesModel(data=data)
+        new_article = ArticlesModel(
+            title=data["title"],
+            slug=data["slug"],
+            description=data["description"],
+            user=existing_user,
+            categories=categories
+        )
 
         db.session.add(new_article)
         db.session.commit()
 
         return jsonify(article_schema.dump(data))
-    except Exception:
+    except Exception as e:
+        print(str(e))
+
         return jsonify({"message": "Server Internal Error"}), 500
 
 
@@ -101,7 +133,7 @@ def update_article(article_id):
 
     if already_existing_slug:
         return jsonify({'message': 'Slug already exist'}), 400
-    
+
     try:
         for key, value in data.items():
             setattr(article, key, value)

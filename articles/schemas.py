@@ -19,5 +19,8 @@ class ArticleSchema(Schema):
     created_at = fields.DateTime(dump_only=True)
     updated_at = fields.DateTime(dump_only=True)
 
+    user_id = fields.Int(required=True)
+    categories_ids = fields.List(fields.Int(), require=True, load_only=True)
+
     categories = fields.List(fields.Nested(CategorySchema), dump_only=True)
     user = fields.Nested(UserSchema, dump_only=True)
