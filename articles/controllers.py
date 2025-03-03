@@ -116,8 +116,8 @@ def create_article():
 
 def update_article(article_id):
     data = request.get_json()
-    article_schema = ArticleSchema(partial=True)
-    article = ArticlesModel.query.get(id=article_id)
+    article_schema = ArticleSchema(partial=True, exclude=["user_id"])
+    article = ArticlesModel.query.get(article_id)
 
     if not article:
         return jsonify({"error": "Article not found"}), 404
@@ -133,6 +133,23 @@ def update_article(article_id):
 
     if already_existing_slug:
         return jsonify({'message': 'Slug already exist'}), 400
+    
+    category_ids = data.get("categories_ids", [])
+
+    if category_ids:
+        categories = []
+
+        for category_id in category_ids:
+            category = CategoryModel.query.get(category_id)
+
+            if not category:
+                return jsonify({"message": f"Doesn't match category with given id {category_id}"}), 400
+
+            categories.append(category)       
+
+        data["categories"] = categories
+
+        data.pop("categories_ids")
 
     try:
         for key, value in data.items():
