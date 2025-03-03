@@ -8,6 +8,7 @@ import reviews
 
 from users.routes import users_blueprint
 from articles.routes import articles_blueprint
+from reviews.routes import reviews_blueprint
 
 
 app = Flask(__name__)
@@ -22,6 +23,7 @@ migrate = Migrate(app, db)
 
 app.register_blueprint(users_blueprint)
 app.register_blueprint(articles_blueprint)
+app.register_blueprint(reviews_blueprint)
 
 if __name__ == "__main__":
     app.run(
