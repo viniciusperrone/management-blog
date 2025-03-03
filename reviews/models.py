@@ -13,7 +13,7 @@ class ReviewModel(db.Model):
     created_at = db.Column(db.DateTime, default=dt.utcnow, nullable=False)
 
     user = db.relationship("UserModel", backref="reviews")
-    article = db.relationship("ArticleModel", backref="reviews")
+    article = db.relationship("ArticlesModel", backref="reviews")
 
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     article_id = db.Column(db.Integer, db.ForeignKey("articles.id"), nullable=False)
