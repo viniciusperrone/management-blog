@@ -1,8 +1,10 @@
 from flask import Flask
 from flask_migrate import Migrate
 from db import db
+
 import users
 import articles
+import reviews
 
 from users.routes import users_blueprint
 from articles.routes import articles_blueprint
