@@ -49,7 +49,7 @@ def list_articles():
     return jsonify(articles_schema.dump(articles)), 200
 
 def detail_article(article_id):
-    article = ArticlesModel.query.filter_by(id=article_id).first()
+    article = ArticlesModel.query.get(article_id)
     article_schema = ArticleSchema()
 
     if article is None:
@@ -162,7 +162,7 @@ def update_article(article_id):
         return jsonify({"message": "Server Internal Error"}), 500
 
 def delete_article(article_id):
-    article = ArticlesModel.query.get(id=article_id)
+    article = ArticlesModel.query.get(article_id)
 
     if not article:
         return jsonify({"error": "Article not found"}), 404
