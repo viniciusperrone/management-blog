@@ -1,4 +1,5 @@
 from flask import jsonify, request
+from flask_jwt_extended import jwt_required
 from db import db
 
 from articles.models import ArticlesModel, CategoryModel
@@ -6,6 +7,7 @@ from articles.schemas import ArticleSchema, CategorySchema
 from users.models import UserModel
 
 
+@jwt_required()
 def create_category():
     data = request.get_json()
 
@@ -35,6 +37,7 @@ def create_category():
         return jsonify({"message": "Server Internal Error"}), 500
 
 
+@jwt_required()
 def list_categories():
     categories = CategoryModel.query.all()
     categories_schema = CategorySchema(many=True)
@@ -42,12 +45,14 @@ def list_categories():
     return jsonify(categories_schema.dump(categories)), 200
 
 
+@jwt_required()
 def list_articles():
     articles = ArticlesModel.query.all()
     articles_schema = ArticleSchema(many=True)
 
     return jsonify(articles_schema.dump(articles)), 200
 
+@jwt_required()
 def detail_article(article_id):
     article = ArticlesModel.query.get(article_id)
     article_schema = ArticleSchema()
@@ -58,6 +63,7 @@ def detail_article(article_id):
     return jsonify(article_schema.dump(article)), 200
 
 
+@jwt_required()
 def create_article():
     data = request.get_json()
     article_schema = ArticleSchema()
@@ -114,6 +120,7 @@ def create_article():
         return jsonify({"message": "Server Internal Error"}), 500
 
 
+@jwt_required()
 def update_article(article_id):
     data = request.get_json()
     article_schema = ArticleSchema(partial=True, exclude=["user_id"])
@@ -161,6 +168,8 @@ def update_article(article_id):
     except Exception:
         return jsonify({"message": "Server Internal Error"}), 500
 
+
+@jwt_required()
 def delete_article(article_id):
     article = ArticlesModel.query.get(article_id)
 

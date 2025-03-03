@@ -1,11 +1,14 @@
 from flask import jsonify, request
+from flask_jwt_extended import jwt_required
 from db import db
+
 from reviews.models import ReviewModel
 from reviews.schema import ReviewSchema
 from users.models import UserModel
 from articles.models import ArticlesModel
 
 
+@jwt_required()
 def list_review():
     reviews = ReviewModel.query.all()
     reviews_schema = ReviewSchema(many=True)
@@ -13,6 +16,7 @@ def list_review():
     return jsonify(reviews_schema.dump(reviews)), 200
 
 
+@jwt_required()
 def detail_review(review_id):
     review = ReviewModel.query.get(review_id)
     review_schema = ReviewSchema()
@@ -23,6 +27,7 @@ def detail_review(review_id):
     return jsonify(review_schema.dump(review)), 200
     
 
+@jwt_required()
 def create_review():
     data = request.get_json()
     review_schema = ReviewSchema()
@@ -61,6 +66,7 @@ def create_review():
         return jsonify({"message": "Server Internal Error"}), 500
 
 
+@jwt_required()
 def delete_review(review_id):
     review = ReviewModel.query.get(review_id)
 
