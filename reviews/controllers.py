@@ -62,4 +62,16 @@ def create_review():
 
 
 def delete_review(review_id):
-    ...
+    review = ReviewModel.query.get(review_id)
+
+    if not review:
+        return jsonify({"error": "Review not found"}), 404
+
+    try:
+        db.session.delete(review)
+        db.session.commit()
+
+        return jsonify({"message": "Review deleted successfully"}), 201
+
+    except Exception:
+        return jsonify({"message": "Server Internal Error"}), 500
