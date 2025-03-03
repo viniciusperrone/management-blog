@@ -167,7 +167,11 @@ def delete_article(article_id):
     if not article:
         return jsonify({"error": "Article not found"}), 404
 
-    db.session.delete(article)
-    db.session.commit()
+    try:
+        db.session.delete(article)
+        db.session.commit()
 
-    return jsonify({"message": "Article deleted successfully"}), 201
+        return jsonify({"message": "Article deleted successfully"}), 201
+
+    except Exception:
+        return jsonify({"message": "Server Internal Error"}), 500
