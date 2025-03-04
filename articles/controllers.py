@@ -47,10 +47,28 @@ def list_categories():
 
 @jwt_required()
 def list_articles():
-    articles = ArticlesModel.query.all()
+    page = request.args.get('page', 1, type=int)
+    items_per_page = request.args.get('per_page', 10, type=int)
+
+    pagination_articles = ArticlesModel.query.paginate(
+        page=page,
+        per_page=items_per_page,
+        error_out=False
+    )
+
+    articles = pagination_articles.items
+
     articles_schema = ArticleSchema(many=True)
 
-    return jsonify(articles_schema.dump(articles)), 200
+    return jsonify({
+        "total": pagination_articles.total,
+        "page": pagination_articles.page,
+        "per_page": pagination_articles.per_page,
+        "pages": pagination_articles.page,
+        "has_next": pagination_articles.has_next,
+        "has_prev": pagination_articles.has_prev,
+        "articles": articles_schema.dump(articles)
+    }), 200
 
 @jwt_required()
 def detail_article(article_id):
