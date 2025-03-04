@@ -4,7 +4,9 @@ from dotenv import load_dotenv
 from flask import Flask
 from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
+
 from db import db
+from config.elasticsearch_client import create_articles_index
 
 import users
 import articles
@@ -29,6 +31,8 @@ db.init_app(app)
 jwt = JWTManager(app)
 
 migrate = Migrate(app, db)
+
+create_articles_index()
 
 app.register_blueprint(users_blueprint)
 app.register_blueprint(articles_blueprint)
