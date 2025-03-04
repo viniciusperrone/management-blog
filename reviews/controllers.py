@@ -25,6 +25,13 @@ def detail_review(review_id):
         return jsonify({"message": "Review not found"}), 400
     
     return jsonify(review_schema.dump(review)), 200
+
+@jwt_required()
+def get_reviews_by_article(article_id):
+    reviews = ReviewModel.query.filter_by(article_id=article_id)
+    reviews_schema = ReviewSchema(many=True)
+
+    return jsonify(reviews_schema.dump(reviews)), 200
     
 
 @jwt_required()
