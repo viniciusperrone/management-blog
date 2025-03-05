@@ -1,5 +1,6 @@
 from flask import jsonify, request
 from flask_jwt_extended import jwt_required
+from flasgger import swag_from
 from sqlalchemy.exc import SQLAlchemyError
 
 from config.elasticsearch_client import es
@@ -10,7 +11,30 @@ from articles.schemas import ArticleSchema, CategorySchema
 from users.models import UserModel
 from users.schemas import UserSchema
 
-
+@swag_from({
+    'tags': ['Categories'],
+    'summary': 'Create a new category',
+    'description': 'Creates a new article category if it does not already exist.',
+    'parameters': [
+        {
+            'in': 'body',
+            'name': 'body',
+            'required': True,
+            'schema': {
+                'type': 'object',
+                'properties': {
+                    'name': {'type': 'string'}
+                },
+                'required': ['name']
+            }
+        }
+    ],
+    'responses': {
+        201: {'description': 'Category created successfully'},
+        400: {'description': 'Invalid Token'},
+        500: {'description': 'Internal server error'}
+    }
+})
 @jwt_required()
 def create_category():
     data = request.get_json()
@@ -20,7 +44,7 @@ def create_category():
     errors = category_schema.validate(data)
 
     if errors:
-        jsonify(errors), 401
+        jsonify(errors), 400
 
     new_category = CategoryModel(
         name=data["name"]
@@ -41,6 +65,16 @@ def create_category():
         return jsonify({"message": "Server Internal Error"}), 500
 
 
+@swag_from({
+    'tags': ['Categories'],
+    'summary': 'List Categories',
+    'description': 'List All Categories',
+    'responses': {
+        200: {'description': 'List all successful categories'},
+        401: {'description': 'Missing Token'},
+        500: {'description': 'Internal server error'}
+    }
+})
 @jwt_required()
 def list_categories():
     categories = CategoryModel.query.all()
@@ -49,6 +83,20 @@ def list_categories():
     return jsonify(categories_schema.dump(categories)), 200
 
 
+@swag_from({
+    'tags': ['Articles'],
+    'summary': 'List Articles',
+    'description': 'List All Articles',
+    'parameters': [
+        {'name': 'page', 'in': 'path', 'type': 'integer', 'required': False, 'description': 'Current Page'},
+        {'name': 'per_page', 'in': 'path', 'type': 'integer', 'required': False, 'description': 'Items Per Page'}
+    ],
+    'responses': {
+        200: {'description': 'List all successful articles'},
+        401: {'description': 'Missing Token'},
+        500: {'description': 'Internal server error'}
+    }
+})
 @jwt_required()
 def list_articles():
     page = request.args.get('page', 1, type=int)
@@ -74,6 +122,20 @@ def list_articles():
         "articles": articles_schema.dump(articles)
     }), 200
 
+@swag_from({
+    'tags': ['Articles'],
+    'summary': 'Detail Article',
+    'description': 'Detail Article',
+    'parameters': [
+        {'name': 'article_id', 'in': 'path', 'type': 'integer', 'required': True, 'description': 'Article ID'},
+    ],
+    'responses': {
+        200: {'description': 'Article found successful'},
+        401: {'description': 'Missing Token'},
+        404: {'description': 'Article not found'},
+        500: {'description': 'Internal server error'}
+    }
+})
 @jwt_required()
 def detail_article(article_id):
     article = ArticlesModel.query.get(article_id)
@@ -85,6 +147,35 @@ def detail_article(article_id):
     return jsonify(article_schema.dump(article)), 200
 
 
+@swag_from({
+    'tags': ['Articles'],
+    'summary': 'Create Article',
+    'description': 'Create Article',
+    'parameters': [
+        {
+            'in': 'body',
+            'name': 'body',
+            'required': True,
+            'schema': {
+                'type': 'object',
+                'properties': {
+                    'title': {'type': 'string'},
+                    'slug': {'type': 'string'},
+                    'description': {'type': 'string'},
+                    'user_id': {'type': 'integer'},
+                    'categories': {'type': 'array', 'items': { 'type': 'string'}, 'uniqueItems': True },
+                },
+                'required': ['title', 'slug', 'description', 'user_id', 'categories']
+            }
+        },
+    ],
+    'responses': {
+        200: {'description': 'Article created successfully'},
+        400: {'description': 'Invalid Data'},
+        401: {'description': 'Missing Token'},
+        500: {'description': 'Internal server error'}
+    }
+})
 @jwt_required()
 def create_article():
     data = request.get_json()
@@ -161,6 +252,35 @@ def create_article():
         return jsonify({"message": "Server Internal Error", "error": str(e)}), 500
 
 
+@swag_from({
+    'tags': ['Articles'],
+    'summary': 'Create Article',
+    'description': 'Create Article',
+    'parameters': [
+        {'name': 'article_id', 'in': 'path', 'type': 'integer', 'required': True, 'description': 'Article ID'},
+        {
+            'in': 'body',
+            'name': 'body',
+            'required': True,
+            'schema': {
+                'type': 'object',
+                'properties': {
+                    'title': {'type': 'string'},
+                    'slug': {'type': 'string'},
+                    'description': {'type': 'string'},
+                    'categories': {'type': 'array', 'items': { 'type': 'string'}, 'uniqueItems': True },
+                }
+            }
+        },
+    ],
+    'responses': {
+        200: {'description': 'Article updated successfully'},
+        400: {'description': 'Invalid Data'},
+        401: {'description': 'Missing Token'},
+        404: {'description': 'Article not found'},
+        500: {'description': 'Internal server error'}
+    }
+})
 @jwt_required()
 def update_article(article_id):
     data = request.get_json()
@@ -233,6 +353,19 @@ def update_article(article_id):
         return jsonify({"message": "Server Internal Error", "error": str(e)}), 500
 
 
+@swag_from({
+    'tags': ['Articles'],
+    'summary': 'Delete Article',
+    'description': 'Delete Review',
+    'parameters': [
+        {'name': 'article_id', 'in': 'path', 'type': 'integer', 'required': True, 'description': 'Article ID'}
+    ],
+    'responses': {
+        201: {'description': 'Article deleted successfully'},
+        401: {'description': 'Missing Token'},
+        500: {'description': 'Internal server error'}
+    }
+})
 @jwt_required()
 def delete_article(article_id):
     article = ArticlesModel.query.get(article_id)
@@ -259,6 +392,20 @@ def delete_article(article_id):
         return jsonify({"message": "Server Internal Error", "error": str(e)}), 500
 
 
+
+@swag_from({
+    'tags': ['Articles'],
+    'summary': 'Search Article',
+    'description': 'Search Review',
+    'parameters': [
+        {'name': 'query', 'in': 'path', 'type': 'string', 'required': True, 'description': 'Query'}
+    ],
+    'responses': {
+        200: {'description': 'Articles found successfully'},
+        401: {'description': 'Missing Token'},
+        500: {'description': 'Internal server error'}
+    }
+})
 @jwt_required()
 def search_article():
     query = request.args.get("query", "")
