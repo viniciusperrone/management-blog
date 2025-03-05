@@ -224,3 +224,26 @@ def delete_article(article_id):
 
     except Exception:
         return jsonify({"message": "Server Internal Error"}), 500
+
+
+@jwt_required()
+def search_article():
+    query = request.args.get("query", "")
+
+    search_body = {
+        "query": {
+            "multi_match": {
+                "query": query,
+                "fields": ["title", "description", "user.name", "user.email", "categories"]
+            }
+        }
+    }
+
+    results = es.search(index="articles", body=search_body)
+
+    articles = [
+        {**hit["_source"]}
+        for hit in results["hits"]["hits"]
+    ]
+
+    return jsonify(articles), 200
