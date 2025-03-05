@@ -164,8 +164,10 @@ def create_article():
 @jwt_required()
 def update_article(article_id):
     data = request.get_json()
-    article_schema = ArticleSchema(partial=True, exclude=["user_id"])
     article = ArticlesModel.query.get(article_id)
+
+    article_schema = ArticleSchema(partial=True, exclude=["user_id"])
+    user_schema = UserSchema(only=["name", "email"])
 
     if not article:
         return jsonify({"error": "Article not found"}), 404
@@ -205,9 +207,30 @@ def update_article(article_id):
 
         db.session.commit()
 
+        es.update(
+            index="articles",
+            id=article_id,
+            body={
+                "doc": {
+                    "title": article.title,
+                    "description": article.description,
+                    "slug": article.slug,
+                    "categories": [category.name for category in article.categories],
+                    "user": user_schema.dump(article.user),
+                }
+            }
+        )
+
         return jsonify(article_schema.dump(article)), 200
-    except Exception:
-        return jsonify({"message": "Server Internal Error"}), 500
+    
+    except SQLAlchemyError as e:
+        db.session.rollback()
+
+        return jsonify({"message": "Database Error", "error": str(e)}), 500
+    except Exception as e:
+        db.session.rollback()
+
+        return jsonify({"message": "Server Internal Error", "error": str(e)}), 500
 
 
 @jwt_required()

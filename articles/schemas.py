@@ -23,4 +23,4 @@ class ArticleSchema(Schema):
     categories_ids = fields.List(fields.Int(), require=True, load_only=True)
 
     categories = fields.List(fields.Nested(CategorySchema), dump_only=True)
-    user = fields.Nested(UserSchema, dump_only=True)
+    user = fields.Nested(UserSchema, dump_only=True, only=["name", "email"])
