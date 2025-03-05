@@ -135,6 +135,8 @@ def create_article():
 
         db.session.add(new_article)
 
+        db.session.commit()
+
         es.index(
             index="articles", 
             id=new_article.id,
@@ -147,7 +149,6 @@ def create_article():
             }
         )
 
-        db.session.commit()
 
         return jsonify(article_schema.dump(data))
     except SQLAlchemyError as e:
@@ -217,13 +218,22 @@ def delete_article(article_id):
         return jsonify({"error": "Article not found"}), 404
 
     try:
+        es.delete(index="articles", id=article_id)
+
         db.session.delete(article)
+
         db.session.commit()
 
         return jsonify({"message": "Article deleted successfully"}), 201
 
-    except Exception:
-        return jsonify({"message": "Server Internal Error"}), 500
+    except SQLAlchemyError as e:
+        db.session.rollback()
+
+        return jsonify({"message": "Database Error", "error": str(e)}), 500
+    except Exception as e:
+        db.session.rollback()
+
+        return jsonify({"message": "Server Internal Error", "error": str(e)}), 500
 
 
 @jwt_required()
