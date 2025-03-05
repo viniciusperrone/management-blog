@@ -17,7 +17,7 @@ es = Elasticsearch(
 )
 
 def create_articles_index():
-    
+
     if not es.indices.exists(index="articles"):
         es.indices.create(
             index="articles",
@@ -28,11 +28,9 @@ def create_articles_index():
                         "description": {"type": "text"},
                         "slug": {"type": "keyword"},
                         "categories": {"type": "keyword"},
-                        "created_at": {"type": "date"},
                         "user": {
                             "type": "object",
                             "properties": {
-                                "id": {"type": "integer"},
                                 "name": {"type": "text"},
                                 "email": {"type": "text"}
                             }

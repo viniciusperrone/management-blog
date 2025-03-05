@@ -31,6 +31,7 @@ services:
     container_name: blog-elasticsearch
     environment:
       - discovery.type=single-node
+      - xpack.security.http.ssl.enabled=false
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
       - ELASTIC_USERNAME=elastic
       - ELASTIC_PASSWORD=elastic

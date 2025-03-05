@@ -1,10 +1,14 @@
 from flask import jsonify, request
 from flask_jwt_extended import jwt_required
+from sqlalchemy.exc import SQLAlchemyError
+
+from config.elasticsearch_client import es
 from db import db
 
 from articles.models import ArticlesModel, CategoryModel
 from articles.schemas import ArticleSchema, CategorySchema
 from users.models import UserModel
+from users.schemas import UserSchema
 
 
 @jwt_required()
@@ -85,6 +89,7 @@ def detail_article(article_id):
 def create_article():
     data = request.get_json()
     article_schema = ArticleSchema()
+    user_schema = UserSchema(only=["name", "email"])
 
     errors = article_schema.validate(data)
 
@@ -129,13 +134,30 @@ def create_article():
         )
 
         db.session.add(new_article)
+
+        es.index(
+            index="articles", 
+            id=new_article.id,
+            body={
+                "title": new_article.title,
+                "description": new_article.description,
+                "slug": new_article.slug,
+                "user": user_schema.dump(existing_user),
+                "categories": [category.name for category in new_article.categories],
+            }
+        )
+
         db.session.commit()
 
         return jsonify(article_schema.dump(data))
-    except Exception as e:
-        print(str(e))
+    except SQLAlchemyError as e:
+        db.session.rollback()
 
-        return jsonify({"message": "Server Internal Error"}), 500
+        return jsonify({"message": "Database Error", "error": str(e)}), 500
+    except Exception as e:
+        db.session.rollback()
+
+        return jsonify({"message": "Server Internal Error", "error": str(e)}), 500
 
 
 @jwt_required()
