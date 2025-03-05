@@ -1,9 +1,37 @@
 from flask import request, jsonify
+from flasgger import swag_from
 from db import db
+
 from users.models import UserModel
 from users.schemas import UserSchema
 
 
+@swag_from({
+    'tags': ['User'],
+    'summary': 'Create User',
+    'description': 'Create User',
+    'parameters': [
+        {
+            'in': 'body',
+            'name': 'body',
+            'required': True,
+            'schema': {
+                'type': 'object',
+                'properties': {
+                    'email': {'type': 'string'},
+                    'password': {'type': 'string'}
+                },
+                'required': ['email', 'password']
+            }
+        }
+    ],
+    'responses': {
+        201: {'description': 'User created successfully'},
+        400: {'description': 'Invalid Data'},
+        409: {'description': 'There is already an email'},
+        500: {'description': 'Internal server error'}
+    }
+})
 def create_user():
     data = request.get_json()
     user_schema = UserSchema()
