@@ -1,9 +1,36 @@
 from flask import jsonify, request
 from flask_jwt_extended import create_access_token
+from flasgger import swag_from
 
 from authentication.schema import AuthenticationSchema
 from users.models import UserModel
 
+
+@swag_from({
+    'tags': ['Auth'],
+    'summary': 'Login',
+    'description': 'JWT Auth',
+    'parameters': [
+        {
+            'in': 'body',
+            'name': 'body',
+            'required': True,
+            'schema': {
+                'type': 'object',
+                'properties': {
+                    'email': {'type': 'string'},
+                    'password': {'type': 'string'}
+                },
+                'required': ['email', 'password']
+            }
+        }
+    ],
+    'responses': {
+        200: {'description': 'Created Access Token'},
+        404: {'description': 'Invalid email or password'},
+        500: {'description': 'Internal server error'}
+    }
+})
 def login():
     data = request.get_json()
     authentication_schema = AuthenticationSchema()
@@ -16,8 +43,12 @@ def login():
     email = data["email"]
     password = data["password"]
 
-    UserModel.query.filter_by(email=email, password=password).first_or_404("Invalid email or password")
+    try:
+        UserModel.query.filter_by(email=email, password=password).first_or_404("Invalid email or password")
 
-    access_token = create_access_token(identity=email)
+        access_token = create_access_token(identity=email)
 
-    return jsonify(access_token=access_token), 200
+        return jsonify(access_token=access_token), 200
+
+    except Exception:
+        return jsonify({"message": "Server Internal Error"}), 500
