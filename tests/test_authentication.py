@@ -11,8 +11,9 @@ def test_login_success(client):
         user = UserModel(
             name="Joe Doe", 
             email="joedoe@gmail.com",
-            password="master554"    
         )
+
+        user.set_password("master554")
 
         db.session.add(user)
         db.session.commit()
