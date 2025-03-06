@@ -21,28 +21,33 @@ from authentication.routes import authentication_blueprint
 
 load_dotenv()
 
-app = Flask(__name__)
+def initialize_app():
+    app = Flask(__name__)
 
-app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv('SQLALCHEMY_DATABASE_URI')
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = os.getenv('SQLALCHEMY_TRACK_MODIFICATIONS')
-app.config['SQLALCHEMY_ECHO'] = os.getenv('SQLALCHEMY_ECHO') 
-app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
+    app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv('SQLALCHEMY_DATABASE_URI')
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = os.getenv('SQLALCHEMY_TRACK_MODIFICATIONS')
+    app.config['SQLALCHEMY_ECHO'] = os.getenv('SQLALCHEMY_ECHO') 
+    app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
 
-db.init_app(app)
-jwt = JWTManager(app)
+    db.init_app(app)
+    jwt = JWTManager(app)
 
-migrate = Migrate(app, db)
+    migrate = Migrate(app, db)
 
-create_articles_index()
+    create_articles_index()
 
-swagger = Swagger(app)
+    swagger = Swagger(app)
 
-app.register_blueprint(users_blueprint)
-app.register_blueprint(articles_blueprint)
-app.register_blueprint(reviews_blueprint)
-app.register_blueprint(authentication_blueprint)
+    app.register_blueprint(users_blueprint)
+    app.register_blueprint(articles_blueprint)
+    app.register_blueprint(reviews_blueprint)
+    app.register_blueprint(authentication_blueprint)
+
+    return app
 
 if __name__ == "__main__":
+    app = initialize_app()
+    
     app.run(
         host="127.0.0.1",
         port=5000
