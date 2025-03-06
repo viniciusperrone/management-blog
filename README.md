@@ -7,7 +7,7 @@
   <h1 align="center">📄 Management Blog</h1>
 
   <p align="center">
-    <img src="https://github.com/viniciusperrone/management-blog/blob/master/static/swagger_gif.gif" alt="Logo" width="50%">
+    <img src="https://github.com/viniciusperrone/management-blog/blob/master/static/management_blog_diagram.png" alt="Logo" heigth="200px">
   </p>
 </p>
 
@@ -29,6 +29,10 @@ It has the following features:
 - Registering/Updating/Deleting articles
 - List of articles
 - Search for articles by any data provided
+
+<p align="center">
+    <img src="https://github.com/viniciusperrone/management-blog/blob/master/static/management_blog_gif.gif" alt="Logo" height="200px">
+</p>
 
 ## How to install?
 
