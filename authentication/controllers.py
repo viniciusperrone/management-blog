@@ -43,9 +43,12 @@ def login():
     email = data["email"]
     password = data["password"]
 
-    try:
-        UserModel.query.filter_by(email=email, password=password).first_or_404("Invalid email or password")
+    user = UserModel.query.filter_by(email=email).first()
 
+    if not user or not user.check_password(password):
+        return jsonify({"message": "Invalid email or password"}), 404
+
+    try:
         access_token = create_access_token(identity=email)
 
         return jsonify(access_token=access_token), 200

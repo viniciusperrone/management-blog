@@ -44,13 +44,14 @@ def create_user():
     new_user = UserModel(
         name=data['name'],
         email=data['email'],
-        password=data['password']
     )
+    new_user.set_password(data['password'])
 
     existing_user = UserModel.query.filter_by(email=data['email']).first()
 
     if existing_user:
         return jsonify({"error": "There is already an email"}), 409
+
 
     try:
         db.session.add(new_user)
