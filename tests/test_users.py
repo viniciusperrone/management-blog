@@ -5,9 +5,9 @@ from flask import json
 
 def test_create_user(client):
     user_data = {
-        "name": "Test User",
-        "email": "test@example.com",
-        "password": "securepassword"
+        "name": "Joe Doe",
+        "email": "joedoe@gmail.com",
+        "password": "master554"
     }
 
     response = client.post("/users", data=json.dumps(user_data), content_type="application/json")
