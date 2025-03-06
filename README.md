@@ -12,11 +12,50 @@
 * [About the Project](#about-the-project)
 * [How to install?](#how-to-install)
 * [Built With](#built-with)
-* [Acknowledgements](#acknowledgements)
 
 ## About the Project
 
 ## How to install?
+
+Running the project on your machine is a simple process. Make sure you have Docker Engine or Docker Desktop installed on your machine. Then update the environment variables in the .env file, as follows: 
+
+```env
+SQLALCHEMY_DATABASE_URI=
+SQLALCHEMY_TRACK_MODIFICATIONS=
+SQLALCHEMY_ECHO=
+
+JWT_SECRET_KEY=
+
+ELASTICSEARCH_URL=
+ELASTICSEARCH_USER=
+ELASTICSEARCH_PASSWORD=
+```
+
+After that, start all the services declared in the docker-compose file. To do this, run the following command.
+
+```bash
+$ docker-compose up -d --build
+```
+
+With the containers running, we need to migrate their models to our postgres database. To do this, run the following commands:
+
+```bash
+$ docker exec -it blog-api /bin/bash
+
+root@274c42373ef1:/app# flask db migrate
+
+root@274c42373ef1:/app# flask db upgrade
+```
+
+Now our application is running. If you want to test it, run the following commands:
+
+```bash
+$ docker exec -it blog-api /bin/bash
+
+root@274c42373ef1:/app# export TESTING=True
+
+root@274c42373ef1:/app# pytest
+```
 
 ## Built With
 
