@@ -26,7 +26,7 @@ def initialize_app():
 
     if os.getenv("TESTING") == "True":
         app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
-        print("🛠  Rodando testes no SQLite (isolado)")
+        app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
     else:
         app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv('SQLALCHEMY_DATABASE_URI')
         app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = os.getenv('SQLALCHEMY_TRACK_MODIFICATIONS')

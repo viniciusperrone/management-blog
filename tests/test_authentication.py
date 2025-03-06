@@ -8,7 +8,12 @@ from users.models import UserModel
 
 def test_login_success(client):
     with client.application.app_context():
-        user = UserModel(name="Joe Doe", email="joedoe@gmail.com", password="master554")
+        user = UserModel(
+            name="Joe Doe", 
+            email="joedoe@gmail.com",
+            password="master554"    
+        )
+
         db.session.add(user)
         db.session.commit()
 
