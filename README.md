@@ -15,6 +15,17 @@
 
 ## About the Project
 
+Management Blog is a system that allows users to register, edit and delete articles, as well as rate published content.
+
+It has the following features:
+
+- User registration
+- Authentication system
+- Category registration
+- Registering/Updating/Deleting articles
+- List of articles
+- Search for articles by any data provided
+
 ## How to install?
 
 Running the project on your machine is a simple process. Make sure you have Docker Engine or Docker Desktop installed on your machine. Then update the environment variables in the .env file, as follows: 
