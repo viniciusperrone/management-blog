@@ -58,4 +58,4 @@ def create_user():
 
         return jsonify(user_schema.dump(new_user)), 201
     except Exception:
-        return jsonify({"message": "Server Internal Error"}), 500
+        return jsonify({"message": "Internal Server Error"}), 500

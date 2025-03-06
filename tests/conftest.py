@@ -1,7 +1,15 @@
+import os
 import pytest
 
 from app import initialize_app
 from db import db
+
+import users
+import articles
+import reviews
+
+
+os.environ["TESTING"] = "True"
 
 @pytest.fixture()
 def app():

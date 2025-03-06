@@ -62,7 +62,7 @@ def create_category():
         return jsonify(category_schema.dump(new_category)), 201
 
     except Exception:
-        return jsonify({"message": "Server Internal Error"}), 500
+        return jsonify({"message": "Internal Server Error"}), 500
 
 
 @swag_from({
@@ -249,7 +249,7 @@ def create_article():
     except Exception as e:
         db.session.rollback()
 
-        return jsonify({"message": "Server Internal Error", "error": str(e)}), 500
+        return jsonify({"message": "Internal Server Error", "error": str(e)}), 500
 
 
 @swag_from({
@@ -350,7 +350,7 @@ def update_article(article_id):
     except Exception as e:
         db.session.rollback()
 
-        return jsonify({"message": "Server Internal Error", "error": str(e)}), 500
+        return jsonify({"message": "Internal Server Error", "error": str(e)}), 500
 
 
 @swag_from({
@@ -389,7 +389,7 @@ def delete_article(article_id):
     except Exception as e:
         db.session.rollback()
 
-        return jsonify({"message": "Server Internal Error", "error": str(e)}), 500
+        return jsonify({"message": "Internal Server Error", "error": str(e)}), 500
 
 
 

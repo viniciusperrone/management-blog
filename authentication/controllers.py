@@ -50,5 +50,5 @@ def login():
 
         return jsonify(access_token=access_token), 200
 
-    except Exception:
-        return jsonify({"message": "Server Internal Error"}), 500
+    except Exception as e:
+        return jsonify({"message": "Internal Server Error", "error": str(e)}), 500

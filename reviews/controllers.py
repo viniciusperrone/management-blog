@@ -138,7 +138,7 @@ def create_review():
     except Exception as e:
         print(str(e))
 
-        return jsonify({"message": "Server Internal Error"}), 500
+        return jsonify({"message": "Internal Server Error"}), 500
 
 
 @swag_from({
@@ -168,4 +168,4 @@ def delete_review(review_id):
         return jsonify({"message": "Review deleted successfully"}), 201
 
     except Exception:
-        return jsonify({"message": "Server Internal Error"}), 500
+        return jsonify({"message": "Internal Server Error"}), 500

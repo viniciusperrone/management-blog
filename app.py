@@ -24,10 +24,14 @@ load_dotenv()
 def initialize_app():
     app = Flask(__name__)
 
-    app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv('SQLALCHEMY_DATABASE_URI')
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = os.getenv('SQLALCHEMY_TRACK_MODIFICATIONS')
-    app.config['SQLALCHEMY_ECHO'] = os.getenv('SQLALCHEMY_ECHO') 
-    app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
+    if os.getenv("TESTING") == "True":
+        app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
+        print("🛠  Rodando testes no SQLite (isolado)")
+    else:
+        app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv('SQLALCHEMY_DATABASE_URI')
+        app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = os.getenv('SQLALCHEMY_TRACK_MODIFICATIONS')
+        app.config['SQLALCHEMY_ECHO'] = os.getenv('SQLALCHEMY_ECHO') 
+        app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
 
     db.init_app(app)
     jwt = JWTManager(app)
