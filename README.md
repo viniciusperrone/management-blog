@@ -5,6 +5,10 @@
 
 <p align="center">
   <h1 align="center">📄 Management Blog</h1>
+
+  <p align="center">
+    <img src="https://github.com/viniciusperrone/management-blog/blob/master/static/swagger_gif.gif" alt="Logo" width="50%">
+  </p>
 </p>
 
 ## Table of Contents
