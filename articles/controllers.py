@@ -241,7 +241,7 @@ def create_article():
         )
 
 
-        return jsonify(article_schema.dump(data))
+        return jsonify(article_schema.dump(data)), 201
     except SQLAlchemyError as e:
         db.session.rollback()
 
