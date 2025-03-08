@@ -43,7 +43,7 @@ def auth_token(client):
         "password": "master554"
     }
 
-    client.post(
+    user_response = client.post(
         "/users", 
         json=user_data, 
         content_type="application/json"
@@ -54,6 +54,12 @@ def auth_token(client):
         json={"email": user_data["email"], "password": user_data["password"]}
     )
 
+    user_data = json.loads(user_response.data.decode("utf-8"))
     login_data = json.loads(login_response.data.decode("utf-8"))
-    
-    return login_data["access_token"]
+
+    auth_response = {
+        "user_id": user_data["id"],
+        "access_token": login_data["access_token"]
+    }
+
+    return auth_response
