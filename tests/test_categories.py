@@ -3,8 +3,10 @@ from flask import request
 
 
 def test_create_category(client, auth_token):
+    access_token = auth_token.get("access_token", "")
+    
     headers = {
-        "Authorization": f"Bearer {auth_token}" 
+        "Authorization": f"Bearer {access_token}" 
     }
     data = {"name": "Technology"}
 
