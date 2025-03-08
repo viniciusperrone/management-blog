@@ -1,4 +1,4 @@
-from db import db, articles_categories
+from config.db import db, articles_categories
 
 from datetime import datetime
 

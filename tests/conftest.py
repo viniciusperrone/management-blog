@@ -2,7 +2,7 @@ import os
 import pytest
 
 from app import initialize_app
-from db import db
+from config.db import db
 
 import users
 import articles

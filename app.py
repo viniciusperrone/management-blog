@@ -6,7 +6,7 @@ from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
 from flasgger import Swagger
 
-from db import db
+from config.db import db
 from config.elasticsearch_client import create_articles_index
 
 import users

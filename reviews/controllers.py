@@ -1,7 +1,7 @@
 from flask import jsonify, request
 from flask_jwt_extended import jwt_required
 from flasgger import swag_from
-from db import db
+from config.db import db
 
 from reviews.models import ReviewModel
 from reviews.schema import ReviewSchema

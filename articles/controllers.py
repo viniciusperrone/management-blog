@@ -4,7 +4,7 @@ from flasgger import swag_from
 from sqlalchemy.exc import SQLAlchemyError
 
 from config.elasticsearch_client import es
-from db import db
+from config.db import db
 
 from articles.models import ArticlesModel, CategoryModel
 from articles.schemas import ArticleSchema, CategorySchema

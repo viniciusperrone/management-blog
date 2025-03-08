@@ -1,6 +1,6 @@
 from datetime import datetime as dt
 
-from db import db
+from config.db import db
 
 
 class ReviewModel(db.Model):

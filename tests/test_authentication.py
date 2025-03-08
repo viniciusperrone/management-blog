@@ -1,7 +1,7 @@
 import pytest
 import json
 from flask import request
-from db import db
+from config.db import db
 
 from users.models import UserModel
 

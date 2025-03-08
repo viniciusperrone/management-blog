@@ -1,6 +1,6 @@
 from flask import request, jsonify
 from flasgger import swag_from
-from db import db
+from config.db import db
 
 from users.models import UserModel
 from users.schemas import UserSchema
