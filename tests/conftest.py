@@ -1,5 +1,6 @@
 import os
 import pytest
+import json
 
 from app import initialize_app
 from config.db import db
@@ -34,3 +35,25 @@ def client(app):
 def runner(app):
     return app.test_cli_runner()
 
+@pytest.fixture
+def auth_token(client):
+    user_data = {
+        "name": "Joe Doe", 
+        "email": "joedoe@gmail.com", 
+        "password": "master554"
+    }
+
+    client.post(
+        "/users", 
+        json=user_data, 
+        content_type="application/json"
+    )
+
+    login_response = client.post(
+        "/authentication/login", 
+        json={"email": user_data["email"], "password": user_data["password"]}
+    )
+
+    login_data = json.loads(login_response.data.decode("utf-8"))
+    
+    return login_data["access_token"]
