@@ -63,3 +63,41 @@ def auth_token(client):
     }
 
     return auth_response
+
+@pytest.fixture()
+def article(client, auth_token):
+    access_token = auth_token.get("access_token", "")
+    user_id = auth_token.get("user_id", None)
+
+    headers = {
+        "Authorization": f"Bearer {access_token}"
+    }
+
+    data = {"name": "Technology"}
+
+    category_response = client.post(
+        "/articles/category/new", 
+        headers=headers, 
+        json=data
+    )
+
+    category_data = json.loads(category_response.data.decode("utf-8"))
+
+    article_payload = {
+        "title": "Pytest",
+        "slug": "pytest",
+        "description": "Pytest",
+        "user_id": user_id,
+        "categories_ids": [category_data["id"]],
+    }
+
+    articles_response = client.post(
+        "/articles", 
+        json=article_payload, 
+        headers=headers, 
+        content_type="application/json"
+    )
+
+    article_data = json.loads(articles_response.data.decode("utf-8"))
+
+    return article_data["id"]

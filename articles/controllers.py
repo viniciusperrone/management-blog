@@ -241,7 +241,7 @@ def create_article():
         )
 
 
-        return jsonify(article_schema.dump(data)), 201
+        return jsonify(article_schema.dump(new_article)), 201
     except SQLAlchemyError as e:
         db.session.rollback()
 
@@ -390,8 +390,6 @@ def delete_article(article_id):
         db.session.rollback()
 
         return jsonify({"message": "Internal Server Error", "error": str(e)}), 500
-
-
 
 @swag_from({
     'tags': ['Articles'],
