@@ -35,8 +35,6 @@ def test_create_article(client, auth_token):
         "categories_ids": [category.id],
     }
 
-    print("article_data", article_data)
-
     articles_response = client.post(
         "/articles", 
         json=article_data, 
@@ -45,3 +43,38 @@ def test_create_article(client, auth_token):
     )
 
     assert articles_response.status_code == 201
+
+def test_get_article(client, auth_token, article):
+    access_token = auth_token.get("access_token", "")
+    headers = {"Authorization": f"Bearer {access_token}"}
+
+    response = client.get(f"/articles/{article}/", headers=headers)
+
+    assert response.status_code == 200
+    assert response.json["id"] == article
+
+def test_update_article(client, auth_token, article):
+    access_token = auth_token.get("access_token", "")
+    headers = {"Authorization": f"Bearer {access_token}"}
+
+    updated_article_data = {
+        "title": "Updated Title",
+        "slug": "updated-title",
+        "description": "updated description",
+    }
+
+    response = client.put(
+        f"/articles/{article}/", 
+        json=updated_article_data, 
+        headers=headers
+    )
+
+    assert response.status_code == 200
+
+def test_delete_article(client, auth_token, article):
+    access_token = auth_token.get("access_token", "")
+    headers = {"Authorization": f"Bearer {access_token}"}
+
+    response = client.delete(f"/articles/{article}/", headers=headers)
+
+    assert response.status_code == 201
